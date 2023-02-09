@@ -18,7 +18,7 @@ const CreatePet = (props) => {
 
   // set up(pull our navigate fn from useNavigate)
   const navigate = useNavigate()
-  console.log(navigate)
+  //console.log(navigate)
 
 const [pet, setPet] = useState({
   name: '',

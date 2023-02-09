@@ -1,11 +1,11 @@
 import {useState, useEffect} from 'react'
 
 // use params from react-router-dom allows us to see our route parameters
-import {useParams} from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import {Container, Card, Button} from 'react-bootstrap'
 
-import {getOnePet} from '../../api/pets'
+import {getOnePet, removePet } from '../../api/pets'
 
 import messages from '../shared/AutoDismissAlert/messages'
 
@@ -19,6 +19,7 @@ const ShowPet = (props) => {
   const [pet, setPet] = useState(null)
   
   const { id } = useParams()
+  const navigate = useNavigate()
 
   const { user, msgAlert } = props
   console.log('user in ShowPet props', user)
@@ -36,6 +37,28 @@ const ShowPet = (props) => {
         })
   }, [])
 
+  // heres where our remove pet function will be called
+  const setPetFree = () => {
+    removePet(user, pet.id)
+      // upon success, send the appropriate message and redirect users
+      .then(() => {
+        msgAlert({
+          heading: 'Success',
+          message: messages.removePetSuccess,
+          variant: 'success'
+        })
+      })
+      .then(() => {navigate('/')})
+    // upon failure, just send a message, no navigation
+    .catch(err => {
+      msgAlert({
+        heading: 'Error',
+        message: messages.removePetFailure,
+        variant: 'danger'
+      })
+    })
+  }
+
   if (!pet) {
     return <LoadingScreen />
   }
@@ -52,6 +75,22 @@ const ShowPet = (props) => {
               <div><small>Adoptable: { pet.adoptable ? 'yes' : 'no' }</small></div>
             </Card.Text>
           </Card.Body>
+          <Card.Footer>
+            {
+              pet.owner && user && pet.owner._id ===user._id
+              ?
+              <>
+                <Button 
+                  className='m-2' 
+                  variant='danger'
+                  onClick={() => setPetFree()}>
+                    Set {pet.name} Free
+                </Button>
+              </>
+              :
+              null
+            }
+          </Card.Footer>
         </Card>
       </Container>
     </>
