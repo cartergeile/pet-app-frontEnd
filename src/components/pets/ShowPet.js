@@ -6,14 +6,24 @@ import {getOnePet, removePet, updatePet } from '../../api/pets'
 import messages from '../shared/AutoDismissAlert/messages'
 import LoadingScreen from '../shared/LoadingScreen'
 import EditPetModal from './EditPetModal'
+import ShowToy from '../toys/ShowToy'
+import NewToyModal from '../toys/NewToyModal'
 
 // we need to get the pet's id from the route parameter
 // then we need to make a request to the api
 // when we retrieve a pet from the api, well render the data on the screen
 
+const toyCardContainerLayout = {
+  display: 'flex',
+  justifyContent: 'center',
+  flexFlow: 'row wrap',
+  textAlign: 'center'
+}
+
 const ShowPet = (props) => {
   const [pet, setPet] = useState(null)
   const [editModalShow, setEditModalShow] = useState(false)
+  const [toyModalShow, setToyModalShow] = useState(false)
   const [updated, setUpdated] = useState(false)
   
   const { id } = useParams()
@@ -57,6 +67,18 @@ const ShowPet = (props) => {
     })
   }
 
+  let toyCards
+  if (pet) {
+    if (pet.toys.length > 0) {
+      toyCards = pet.toys.map(toy => (
+        <ShowToy 
+          key={toy.id}
+          toy={toy}
+        />
+      ))
+    }
+  }
+
   if (!pet) {
     return <LoadingScreen />
   }
@@ -74,6 +96,11 @@ const ShowPet = (props) => {
             </Card.Text>
           </Card.Body>
           <Card.Footer>
+            <Button className='m-2' variant='info'
+                    onClick={() => setToyModalShow(true)}
+            >
+              Give {pet.name} a toy!
+            </Button>
             {
               pet.owner && user && pet.owner._id ===user._id
               ?
@@ -96,6 +123,10 @@ const ShowPet = (props) => {
           </Card.Footer>
         </Card>
       </Container>
+      <h2>{pet.name}'s Toys</h2>
+      <Container className='m-2' style={toyCardContainerLayout}>
+        {toyCards}
+      </Container>
       <EditPetModal 
         user={user}
         show={editModalShow}
@@ -104,6 +135,14 @@ const ShowPet = (props) => {
         msgAlert={msgAlert}
         triggerRefresh={() => setUpdated(prev => !prev)}
         pet={pet}
+      />
+      <NewToyModal 
+        user={user}
+        pet={pet}
+        show={toyModalShow}
+        handleClose={() => setToyModalShow(false)}
+        msgAlert={msgAlert}
+        triggerRefresh={() => setUpdated(prev => !prev)}
       />
     </>
   )
