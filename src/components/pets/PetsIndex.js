@@ -61,7 +61,7 @@ const PetsIndex = (props) => {
         </Card.Text>
         { pet.owner ?
         <Card.Footer>
-          Owner: ${pet.owner.email} 
+          Owner: {pet.owner.email} 
         </Card.Footer>
         : null }
       </Card.Body>
