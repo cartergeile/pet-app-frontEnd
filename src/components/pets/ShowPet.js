@@ -74,6 +74,10 @@ const ShowPet = (props) => {
         <ShowToy 
           key={toy.id}
           toy={toy}
+          user={user}
+          pet={pet}
+          msgAlert={msgAlert}
+          triggerRefresh={() => setUpdated(prev => !prev)}
         />
       ))
     }
@@ -137,7 +141,6 @@ const ShowPet = (props) => {
         pet={pet}
       />
       <NewToyModal 
-        user={user}
         pet={pet}
         show={toyModalShow}
         handleClose={() => setToyModalShow(false)}
